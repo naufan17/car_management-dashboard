@@ -1,6 +1,6 @@
 import dotenv from 'dotenv';
 import express, { Express } from 'express';
-import carRoute from './app/routes/carRoute';
+import carRoute from './src/routes/carRoute';
 
 dotenv.config();
 
