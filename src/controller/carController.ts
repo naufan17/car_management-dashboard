@@ -2,69 +2,95 @@ import fs from 'fs';
 import { Request, Response } from 'express';
 import cloudinary from '../config/cloudinary';
 
-const getCar = async (req: Request, res: Response) => {
-  fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, cars: string) => {
+interface Car {
+  id: string;
+  plate: string;
+  manufacture: string;
+  model: string;
+  image: string;
+  capacity: number;
+  description: string;
+  transmission: string;
+  type: string;
+  year: number;
+}
+
+const getCar = (req: Request, res: Response) => {
+  fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, data: string) => {
     if (err) {
       console.log(err);
-      res.status(500).json({ error: 'Error reading data!' })
+      res.status(500).json({ error: 'Error reading data' })
       return;
     }
 
-    res.status(200).json(JSON.parse(cars))
+    const cars: Car[] = JSON.parse(data);
+    
+    if (!cars) {
+      res.status(404).json({ error: 'Car not found' });
+      return;
+    }
+
+    res.status(200).json(cars)
   })
 }
 
-const getCarById = async (req: Request, res: Response) => {
-  const id = req.params.id;
+const getCarById = (req: Request, res: Response) => {
+  const id: string = req.params.id;
 
-  fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, cars: string) => {
+  fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, data: string) => {
     if (err) {
       console.log(err);
-      res.status(500).json({ error: 'Error reading data!' })
+      res.status(500).json({ error: 'Error reading data' })
       return;
     }
 
-    const car = JSON.parse(cars).find((car: any) => car.id === id);
-    res.status(200).json(car)
+    const cars: Car[] = JSON.parse(data).find((car: any) => car.id === id);
+
+    if (!cars) {
+      res.status(404).json({ error: 'Car not found' });
+      return;
+    }
+
+    res.status(200).json(cars)
   })    
 }
 
-const createCar = async (req: Request, res: Response) => {
-  const { id, plate, manufacture, model, image, capacity, description, transmission, type, year } = req.body;
+const createCar = (req: Request, res: Response) => {
+  const { id, plate, manufacture, model, image, capacity, description, transmission, type, year }: Car = req.body;
 
-  fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, cars: string) => {
+  fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, data: string) => {
     if (err) {
       console.log(err);
-      res.status(500).json({ error: 'Error reading data!' })
+      res.status(500).json({ error: 'Error reading data' })
       return;
     }
 
-    const car = JSON.parse(cars)
-    const payload = { 
-      id: id, 
-      plate: plate, 
-      manufacture: manufacture, 
-      model: model, 
-      image: image, 
-      capacity: capacity, 
-      description: description,
-      transmission: transmission, 
-      type: type, 
-      year: year
+    const cars: Car[] = JSON.parse(data)
+    const payload: Car = { 
+      id,
+      plate,
+      manufacture,
+      model,
+      image,
+      capacity,
+      description,
+      transmission,
+      type,
+      year
     }
 
-    car.push(payload);
-    fs.writeFileSync('cars.json', JSON.stringify(car), 'utf8');
+    cars.push(payload);
+    fs.writeFileSync('cars.json', JSON.stringify(cars), 'utf8');
     res.status(200).json({ message: 'Data success to create' })
   })
 }
 
 const uploadImageCar = async (req: Request, res: Response) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No file uploaded' });
-    }
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
 
+  try {
     const result = await cloudinary.uploader.upload(req.file.path, { 
       folder: 'car', 
       maxFileSize: 2097152 
@@ -73,57 +99,68 @@ const uploadImageCar = async (req: Request, res: Response) => {
     res.status(200).json({ message: 'Image successfully uploaded', url: result.secure_url });
   } catch (err) {
     console.log(err);
-    res.status(500).json({ error: 'Error uploading image!' })
+    res.status(500).json({ error: 'Error uploading image' })
   }
 }
 
-const updateCar = async (req: Request, res: Response) => {
-  const id = req.params.id;
-  const { plate, manufacture, model, image, capacity, description, transmission, type, year } = req.body;
+const updateCar = (req: Request, res: Response) => {
+  const id: string = req.params.id;
+  const { plate, manufacture, model, image, capacity, description, transmission, type, year }: Car = req.body;
 
-  fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, cars: string) => {
+  fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, data: string) => {
     if (err) {
       console.log(err);
-      res.status(500).json({ error: 'Error reading data!' })
+      res.status(500).json({ error: 'Error reading data' })
       return;
     }
 
-    const car = JSON.parse(cars)
-    const index = car.findIndex((car: any) => car.id === id)
-    const payload = { 
-      id: id, 
-      plate: plate, 
-      manufacture: manufacture, 
-      model: model, 
-      image: image, 
-      capacity: capacity, 
-      description: description,
-      transmission: transmission, 
-      type: type, 
-      year: year
+    const cars: Car [] = JSON.parse(data)
+    const index = cars.findIndex((car: any) => car.id === id)
+
+    if (index === -1) {
+      res.status(404).json({ error: 'Car not found' });
+      return;
     }
 
-    car[index] = { ...car[index], ...payload };
-    fs.writeFileSync('cars.json', JSON.stringify(car), 'utf8');
+    const payload: Car = { 
+      id, 
+      plate, 
+      manufacture, 
+      model, 
+      image, 
+      capacity, 
+      description, 
+      transmission, 
+      type, 
+      year 
+    }
+
+    cars[index] = { ...cars[index], ...payload };
+    fs.writeFileSync('cars.json', JSON.stringify(cars), 'utf8');
     res.status(200).json({ message: 'Data success to update' })
   })
 }
 
-const deleteCar = async (req: Request, res: Response) => {
-  const id = req.params.id;
+const deleteCar = (req: Request, res: Response) => {
+  const id: string = req.params.id;
 
-  fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, cars: string) => {
+  fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, data: string) => {
     if (err) {
       console.log(err);
-      res.status(500).json({ error: 'Error reading data!' })
+      res.status(500).json({ error: 'Error reading data' })
       return;
     }
 
-    const car = JSON.parse(cars);
-    const index = car.findIndex((car: any) => car.id === id);
-    car.splice(index, 1);
+    const cars: Car[] = JSON.parse(data);
+    const index = cars.findIndex((car: any) => car.id === id);
 
-    fs.writeFileSync('cars.json', JSON.stringify(car), 'utf8');
+    if (index === -1) {
+      res.status(404).json({ error: 'Car not found!' });
+      return;
+    }
+
+    cars.splice(index, 1);
+    fs.writeFileSync('cars.json', JSON.stringify(cars), 'utf8');
     res.status(200).json({ message: 'Data success to delete' })
   })
 }
