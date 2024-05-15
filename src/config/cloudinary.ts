@@ -6,7 +6,7 @@ dotenv.config();
 const { CLOUD_NAME, API_KEY, API_SECRET } = process.env;
 
 if (!CLOUD_NAME || !API_KEY || !API_SECRET) {
-  throw new Error('Cloudinary configuration is incomplete');
+    throw new Error('Cloudinary configuration is incomplete');
 }
 
 cloudinary.config({
