@@ -2,7 +2,6 @@ import fs from 'fs';
 import { Request, Response } from 'express';
 import cloudinary from '../config/cloudinary';
 import Cars from '../models/Car';
-
 interface Car {
     id: string;
     plate: string;
@@ -19,22 +18,23 @@ interface Car {
 const getCar = async (req: Request, res: Response) => {
     // fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, data: string) => {
     //   if (err) {
-      //     console.log(err);
-      //     res.status(500).json({ error: 'Error reading data' })
-      //     return;
+    //       console.log(err);
+    //       res.status(500).json({ error: 'Error reading data' })
+    //       return;
     //   }
 
     //   const cars: Car[] = JSON.parse(data);
       
     //   if (!cars) {
-      //     res.status(404).json({ error: 'Car not found' });
-      //     return;
+    //       res.status(404).json({ error: 'Car not found' });
+    //       return;
     //   }
 
     //   res.status(200).json(cars)
     // })
+
     try {
-        const cars = await Cars.findAll();
+        const cars = await Cars.query().withGraphFetched('[rents, options, specs]');
         res.status(200).json(cars)
       
     } catch (err) {
@@ -62,8 +62,9 @@ const getCarById = async (req: Request, res: Response) => {
 
     //   res.status(200).json(cars)
     // })    
+    
     try {
-        const cars = await Cars.findOne({ where: { id } });
+        const cars = await Cars.query().findById(id).withGraphFetched('[rents, options, specs]');
         res.status(200).json(cars)
       
     } catch (err) {
