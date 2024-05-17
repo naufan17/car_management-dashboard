@@ -12,7 +12,7 @@ const uploadImageCar = async (req: Request, res: Response) => {
             maxFileSize: 2097152 
         });
 
-        res.status(200).json({ message: 'Image successfully uploaded', url: result.secure_url });
+        res.status(200).json({ url: result.secure_url });
     } catch (err) {
         console.log(err);
         res.status(500).json({ error: 'Error uploading image' })

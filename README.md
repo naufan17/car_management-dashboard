@@ -7,7 +7,7 @@ HTTP Rest API database cars
 ## API Documentation
 ### 1. Get All Cars
 - Method: `GET`
-- URL Patterns: `{{base_url}}/car`
+- URL Patterns: `{{base_url}}/api/car`
 - Response:
   - Success: (200)
     ```json
@@ -15,13 +15,9 @@ HTTP Rest API database cars
       "cars": [
         {  
            "id": uuid,
-           "plate": string,
            "manufacture": string,
            "model": string,
            "image": string,
-           "capacity": number,
-           "description": text,
-           "transmission": string,
            "type": string,
            "year": number,
            "rent_price": number,
@@ -41,7 +37,7 @@ HTTP Rest API database cars
 
 ### 2. Get Cars By Id
 - Method: `GET`
-- URL Patterns: `{{base_url}}/car/{id}`
+- URL Patterns: `{{base_url}}/api/car/{id}`
 - Response:
   - Success: (200)
     ```json
@@ -71,9 +67,38 @@ HTTP Rest API database cars
     }
     ```
 
-<!-- ### 3. Create Cars
+### 3. Upload Image Cars
 - Method: `POST`
-- URL Patterns: `{{base_url}}/car`
+- URL Patterns: `{{base_url}}/api/cars`
+- Headers:
+  ``` json
+    {
+      "Content-Type": multipart/form-data
+    }
+  ```
+- Body:
+    ``` json
+    {
+      "image": image (type=file, max=2mb)
+    }
+  ```
+- Response:
+  - Success: (200)
+    ```json
+    {
+      "url": String
+    }
+    ```
+  - Errors: (500)
+    ```json
+    {
+      "message": "Error uploading image"
+    }
+    ```
+
+### 4. Create Cars
+- Method: `POST`
+- URL Patterns: `{{base_url}}/api/car`
 - Body:
     ```json
     {  
@@ -87,8 +112,6 @@ HTTP Rest API database cars
        "type": text,
        "year": number,
        "rent_price": number,
-       "available_at": Date,
-       "available": boolean,
        "options": [ string ],
        "specs": [ string ]
     }
@@ -106,9 +129,9 @@ HTTP Rest API database cars
     }
     ```
 
-### 4. Update Cars
+### 5. Update Cars
 - Method: `PUT`
-- URL Patterns: `{{base_url}}/car/{id}`
+- URL Patterns: `{{base_url}}/api/car/{id}`
 - Body:
     ```json
     {  
@@ -122,8 +145,6 @@ HTTP Rest API database cars
        "type": text,
        "year": number,
        "rent_price": number,
-       "available_at": Date,
-       "available": boolean,
        "options": [ string ],
        "specs": [ string ]
     }
@@ -139,11 +160,11 @@ HTTP Rest API database cars
     { 
         message: 'Failed to update car' 
     }
-    ``` -->
+    ```
 
-<!-- ### 5. Delete Cars
+### 6. Delete Cars
 - Method: `DELETE`
-- URL Patterns: `{{base_url}}/car/{id}`
+- URL Patterns: `{{base_url}}/api/car/{id}`
 - Response:
   - Success: (204)
     ```json
@@ -156,4 +177,35 @@ HTTP Rest API database cars
     { 
         message: 'Failed to delete car' 
     }
-    ```     -->
+    ```    
+
+### 7. Get All Orders
+- Method: `GET`
+- URL Patterns: `{{base_url}}/api/order`
+- Response:
+  - Success: (200)
+    ```json
+    {
+      "orders": [
+        {  
+          "id": uuid,
+          "manufacture": string,
+          "model": string,
+          "type": string,
+          "duration": number,
+          "rent_start": Date,
+          "rent_end": Date,
+          "total_price": number,
+          "status": string,
+          "created_at": Date,
+          "updated_at": Date,
+        },
+      ]
+    }
+    ```
+  - Errors: (404)
+    ```json
+    { 
+        message: 'Car not found' 
+    }
+    ```    
