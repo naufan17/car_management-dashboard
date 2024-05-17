@@ -1,10 +1,13 @@
 import { Model } from 'objection';
 import Car from './Car';
+import Customer from './Customer';
 
 class Order extends Model {
     id!: number;
     car_id!: string;
     cars!: Car[];
+    customer_id!: string;
+    customers!: Customer[];
     duration!: number;
     rent_start!: Date;
     rent_end!: Date;
@@ -26,7 +29,16 @@ class Order extends Model {
                     from: 'orders.car_id',
                     to: 'cars.id'
                 }
+            },
+            customers: {
+                relation: Model.BelongsToOneRelation,
+                modelClass: Customer,
+                join: {
+                    from: 'orders.customer_id',
+                    to: 'customers.id'
+                }
             }
+
         };
     }
 }
