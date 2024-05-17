@@ -1,7 +1,7 @@
 import { Knex } from "knex";
 
 export async function seed(knex: Knex): Promise<void> {
-    // await knex("orders").del();
+    await knex("orders").del();
 
     await knex("orders").insert([
         {

@@ -9,15 +9,16 @@ class Car extends Model {
     plate!: string;
     manufacture!: string;
     model!: string;
-    image!: string | null;
+    image!: string;
     capacity!: number;
-    description!: string | null;
+    description!: string;
     transmission!: string;
     type!: string;
     year!: number;
     rents!: Rent[];
     options!: Option[];
     specs!: Spec[];
+    orders!: Order[];
     created_at!: Date;
     updated_at!: Date;
 

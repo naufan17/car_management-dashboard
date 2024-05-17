@@ -4,7 +4,7 @@ export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable('specs', (table: Knex.TableBuilder) => {
         table.increments('id').primary();
         table.uuid('car_id').references('id').inTable('cars');
-        table.string('spec', 255).notNullable();
+        table.string('spec', 255);
     })
 }
 
