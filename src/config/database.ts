@@ -1,5 +1,5 @@
 import knex from "knex";
-import { Model} from 'objection';
+import { Model } from 'objection';
 import knexConfig from '../../knexfile';
 
 const environment = process.env.ENVIRONMENT || 'development';

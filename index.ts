@@ -1,5 +1,4 @@
-require('./src/config/database');
-
+import './src/config/database';
 import express, { Express } from 'express';
 import carRoute from './src/routes/carRoute';
 
@@ -11,5 +10,5 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/api', carRoute);
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on port ${port}`);
 });

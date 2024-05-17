@@ -1,7 +1,10 @@
 import fs from 'fs';
 import { Request, Response } from 'express';
-import cloudinary from '../config/cloudinary';
 import Cars from '../models/Car';
+import Rents from '../models/Rent';
+import Specs from '../models/Spec';
+import Options from '../models/Option';
+
 interface Car {
     id: string;
     plate: string;
@@ -16,129 +19,90 @@ interface Car {
 }
 
 const getCar = async (req: Request, res: Response) => {
-    // fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, data: string) => {
-    //   if (err) {
-    //       console.log(err);
-    //       res.status(500).json({ error: 'Error reading data' })
-    //       return;
-    //   }
-
-    //   const cars: Car[] = JSON.parse(data);
-      
-    //   if (!cars) {
-    //       res.status(404).json({ error: 'Car not found' });
-    //       return;
-    //   }
-
-    //   res.status(200).json(cars)
-    // })
-
     try {
         const cars = await Cars.query().withGraphFetched('[rents, options, specs]');
+
+        // cars.map(car => ({
+        //     id: car.id,
+        //     plate: car.plate,
+        //     manufacture: car.manufacture,
+        //     model: car.model,
+        //     image: car.image,
+        //     rentPerDay: car.rentPerDay,
+        //     capacity: car.capacity,
+        //     description: car.description,
+        //     availableAt: car.availableAt,
+        //     transmission: car.transmission,
+        //     available: car.available,
+        //     type: car.type,
+        //     year: car.year,
+        //     rents: car.rents.map(rent => ({
+        //         rentId: rent.id,
+        //         rentPerDay: rent.rentPerDay,
+        //         availableAt: rent.availableAt,
+        //         rented: rent.rented
+        //     })),
+        //     options: car.options.map(option => option.option),
+        //     specs: car.specs.map(spec => spec.spec)
+        // }));
+
+        if (!cars) {
+            return res.status(404).json({ error: 'Car not found' });
+        }
+
         res.status(200).json(cars)
-      
     } catch (err) {
         console.log(err);
-        res.status(404).json({ error: 'Car not found' });
+        res.status(500).json({ error: 'Failed to fetch car' });
     }
 }
 
 const getCarById = async (req: Request, res: Response) => {
     const id: string = req.params.id;
-
-    // fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, data: string) => {
-    //   if (err) {
-    //     console.log(err);
-    //     res.status(500).json({ error: 'Error reading data' })
-    //     return;
-    //   }
-
-    //   const cars: Car[] = JSON.parse(data).find((car: any) => car.id === id);
-
-    //   if (!cars) {
-    //     res.status(404).json({ error: 'Car not found' });
-    //     return;
-    //   }
-
-    //   res.status(200).json(cars)
-    // })    
     
     try {
         const cars = await Cars.query().findById(id).withGraphFetched('[rents, options, specs]');
+
+        if (!cars) {
+            return res.status(404).json({ error: 'Car not found' });
+        }
+
         res.status(200).json(cars)
-      
     } catch (err) {
         console.log(err);
-        res.status(404).json({ error: 'Car not found' });
+        res.status(500).json({ error: 'Failed to fetch car' });
     }
 }
 
-const createCar = (req: Request, res: Response) => {
-    const { id, plate, manufacture, model, image, capacity, description, transmission, type, year }: Car = req.body;
-
-    fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, data: string) => {
-        if (err) {
-            console.log(err);
-            res.status(500).json({ error: 'Error reading data' })
-            return;
-        }
-
-        const cars: Car[] = JSON.parse(data)
-        const payload: Car = { 
-            id,
-            plate,
-            manufacture,
-            model,
-            image,
-            capacity,
-            description,
-            transmission,
-            type,
-            year
-        }
-
-        cars.push(payload);
-        fs.writeFileSync('cars.json', JSON.stringify(cars), 'utf8');
-        res.status(200).json({ message: 'Data success to create' })
-    })
-}
-
-const uploadImageCar = async (req: Request, res: Response) => {
-    if (!req.file) {
-        return res.status(400).json({ error: 'No file uploaded' });
-    }
+const createCar = async (req: Request, res: Response) => {
+    // const { id, plate, manufacture, model, image, capacity, description, transmission, type, year }: Car = req.body;
+    const { car, rent, spec, option } = req.body;
+    console.log(car)
 
     try {
-        const result = await cloudinary.uploader.upload(req.file.path, { 
-            folder: 'car', 
-            maxFileSize: 2097152 
-        });
+            // await Cars.query().insert(car);
+            // await Rents.query().insert({ ...rent, car_id: car.id });
+            // await Promise.all(spec.map((spec: any) => Specs.query().insert({ ...spec, car_id: car.id })));
+            // await Promise.all(option.map((option: any) => Options.query().insert({ ...option, car_id: car.id })));
 
-        res.status(200).json({ message: 'Image successfully uploaded', url: result.secure_url });
+            res.status(200).json({ message: 'Car created successfully' })
     } catch (err) {
         console.log(err);
-        res.status(500).json({ error: 'Error uploading image' })
+        res.status(500).json({ error: 'Failed to create car' });
     }
+
+    // try {
+    //     await Cars.query().insert(payload);
+    //     res.status(200).json({ message: 'Car created successfully' })
+    // } catch (err) {
+    //     console.log(err);
+    //     res.status(500).json({ error: 'Failed to create car' });
+    // }
 }
 
-const updateCar = (req: Request, res: Response) => {
+const updateCar = async (req: Request, res: Response) => {
     const id: string = req.params.id;
     const { plate, manufacture, model, image, capacity, description, transmission, type, year }: Car = req.body;
-
-    fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, data: string) => {
-        if (err) {
-            console.log(err);
-            res.status(500).json({ error: 'Error reading data' })
-            return;
-        }
-
-      const cars: Car [] = JSON.parse(data)
-      const index = cars.findIndex((car: any) => car.id === id)
-
-      if (index === -1) {
-          res.status(404).json({ error: 'Car not found' });
-          return;
-      }
 
       const payload: Car = { 
           id, 
@@ -153,34 +117,35 @@ const updateCar = (req: Request, res: Response) => {
           year 
       }
 
-      cars[index] = { ...cars[index], ...payload };
-      fs.writeFileSync('cars.json', JSON.stringify(cars), 'utf8');
-      res.status(200).json({ message: 'Data success to update' })
-    })
-}
+    try {
+        const updatedCar = await Cars.query().patchAndFetchById(id, payload);
 
-const deleteCar = (req: Request, res: Response) => {
-    const id: string = req.params.id;
-
-    fs.readFile('cars.json', 'utf8', (err: NodeJS.ErrnoException | null, data: string) => {
-        if (err) {
-            console.log(err);
-            res.status(500).json({ error: 'Error reading data' })
-            return;
+        if (!updatedCar) {
+            return res.status(404).json({ error: 'Car not found' });
         }
 
-      const cars: Car[] = JSON.parse(data);
-      const index = cars.findIndex((car: any) => car.id === id);
-
-      if (index === -1) {
-          res.status(404).json({ error: 'Car not found!' });
-          return;
-      }
-
-      cars.splice(index, 1);
-      fs.writeFileSync('cars.json', JSON.stringify(cars), 'utf8');
-      res.status(200).json({ message: 'Data success to delete' })
-    })
+        res.status(200).json({ message: 'Car updated successfully' })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: 'Failed to fetch car' });
+    }
 }
 
-export { getCar, getCarById, createCar, uploadImageCar, updateCar, deleteCar }
+const deleteCar = async (req: Request, res: Response) => {
+    const id: string = req.params.id;
+
+    try {
+        const deletedCar = await Cars.query().deleteById(id);
+
+        if (deletedCar === 0) {
+            return res.status(404).json({ error: 'Car not found' });
+        }
+
+        res.status(200).json({ message: 'Car deleted successfully' })
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: 'Failed to delete car' });
+    }
+}
+
+export { getCar, getCarById, createCar, updateCar, deleteCar }
