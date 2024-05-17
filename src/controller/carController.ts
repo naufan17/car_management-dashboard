@@ -126,7 +126,7 @@ const createCar = async (req: Request, res: Response) => {
                 await Options.query(trx).insert({
                     car_id: car_id,
                     option
-                });
+                })
             }
 
             if (Array.isArray(spec)) {
@@ -140,11 +140,11 @@ const createCar = async (req: Request, res: Response) => {
                 await Specs.query(trx).insert({
                     car_id: car_id,
                     spec
-                });
+                })
             }
-
-            res.status(201).json({ message: 'Car created successfully' });
         });
+        
+        res.status(201).json({ message: 'Car created successfully' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to create car' });
@@ -219,9 +219,9 @@ const updateCar = async (req: Request, res: Response) => {
                     spec
                 });
             }
-
-            res.status(201).json({ message: 'Car updated successfully' });
         })
+
+        res.status(201).json({ message: 'Car updated successfully' });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to update car' });
@@ -232,14 +232,18 @@ const deleteCar = async (req: Request, res: Response) => {
     const id: string = req.params.id;
 
     try {
-        await transaction(Cars.knex(), async (trx) => {
+        const rowsDeleted = await transaction(Cars.knex(), async (trx) => {
             await Rents.query(trx).delete().where('car_id', id);
             await Options.query(trx).delete().where('car_id', id);
             await Specs.query(trx).delete().where('car_id', id);
-            await Cars.query(trx).deleteById(id);
-      
-            res.status(204).json({ message: 'Car deleted successfully' })
+            return await Cars.query(trx).deleteById(id);
         });
+
+        if (rowsDeleted === 0) {
+            res.status(404).json({ message: 'Car not found' });
+        }
+  
+        res.status(201).json({ message: 'Car deleted successfully' })
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to delete car' });
