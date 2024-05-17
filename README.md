@@ -21,14 +21,13 @@ HTTP Rest API database cars
            "image": string,
            "capacity": number,
            "description": text,
-           "transmission": text,
-           "type": text,
+           "transmission": string,
+           "type": string,
            "year": number,
            "rent_price": number,
-           "available_at": Date,
            "available": boolean,
-           "options": [ string ],
-           "specs": [ string ]
+           "created_at": Date,
+           "updated_at": Date,
         },
       ]
     }
@@ -46,27 +45,24 @@ HTTP Rest API database cars
 - Response:
   - Success: (200)
     ```json
-    {
-      "cars": [
-        {  
-           "id": uuid,
-           "plate": string,
-           "manufacture": string,
-           "model": string,
-           "image": string,
-           "capacity": number,
-           "description": text,
-           "transmission": text,
-           "type": text,
-           "year": number,
-           "rent_price": number,
-           "available_at": Date,
-           "available": boolean,
-           "options": [ string ],
-           "specs": [ string ]
-        },
-      ]
-    }
+    {  
+        "id": uuid,
+        "plate": string,
+        "manufacture": string,
+        "model": string,
+        "image": string,
+        "capacity": number,
+        "description": text,
+        "transmission": string,
+        "type": string,
+        "year": number,
+        "rent_price": number,
+        "available": boolean,
+        "options": [ string ],
+        "specs": [ string ],
+        "created_at": Date,
+        "updated_at": Date,
+    },
     ```
   - Errors: (404)
     ```json
@@ -75,7 +71,7 @@ HTTP Rest API database cars
     }
     ```
 
-### 3. Create Cars
+<!-- ### 3. Create Cars
 - Method: `POST`
 - URL Patterns: `{{base_url}}/car`
 - Body:
@@ -143,9 +139,9 @@ HTTP Rest API database cars
     { 
         message: 'Failed to update car' 
     }
-    ```
+    ``` -->
 
-### 5. Delete Cars
+<!-- ### 5. Delete Cars
 - Method: `DELETE`
 - URL Patterns: `{{base_url}}/car/{id}`
 - Response:
@@ -160,4 +156,4 @@ HTTP Rest API database cars
     { 
         message: 'Failed to delete car' 
     }
-    ```    
+    ```     -->

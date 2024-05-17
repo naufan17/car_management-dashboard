@@ -5,6 +5,7 @@ import Cars from '../models/Car';
 import Rents from '../models/Rent';
 import Specs from '../models/Spec';
 import Options from '../models/Option';
+import Orders from '../models/Option';
 
 const getCar = async (req: Request, res: Response) => {
     try {
@@ -31,7 +32,7 @@ const getCar = async (req: Request, res: Response) => {
             updated_at: car.updated_at,
         }));
 
-        res.status(200).json(formattedCar)
+        res.status(200).json({ cars: formattedCar })
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to fetch car' });
