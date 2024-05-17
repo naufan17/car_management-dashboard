@@ -26,10 +26,13 @@ const getCar = async (req: Request, res: Response) => {
             type: car.type,
             year: car.year,
             rent_price: car.rents[0].rent_price,
-            available_at: car.rents[0].available_at,
+            rent_start: car.rents[0].rent_start,
+            rent_end: car.rents[0].rent_end,
             available: car.rents[0].available,
             options: car.options.map((option: any) => option.option),
-            specs: car.specs.map((spec: any) => spec.spec)
+            specs: car.specs.map((spec: any) => spec.spec),
+            created_at: car.created_at,
+            updated_at: car.updated_at,
         }));
 
         res.status(200).json(formattedCar)
@@ -61,10 +64,13 @@ const getCarById = async (req: Request, res: Response) => {
             type: cars.type,
             year: cars.year,
             rent_price: cars.rents[0].rent_price,
-            available_at: cars.rents[0].available_at,
+            rent_start: cars.rents[0].rent_start,
+            rent_end: cars.rents[0].rent_end,
             available: cars.rents[0].available,
             options: cars.options.map((option: any) => option.option),
-            specs: cars.specs.map((spec: any) => spec.spec)
+            specs: cars.specs.map((spec: any) => spec.spec),
+            created_at: cars.created_at,
+            updated_at: cars.updated_at,
         };
 
         res.status(200).json(formattedCar)
@@ -74,7 +80,7 @@ const getCarById = async (req: Request, res: Response) => {
     }
 }
 
-const createCar = async (req: Request, res: Response) => {
+const createCar = async (req: Request, res: Response): Promise<void> => {
     const {
         plate,
         manufacture,
@@ -86,7 +92,8 @@ const createCar = async (req: Request, res: Response) => {
         type,
         year,
         rent_price,
-        available_at,
+        rent_start,
+        rent_end,
         available,
         option,
         spec
@@ -111,7 +118,8 @@ const createCar = async (req: Request, res: Response) => {
             await Rents.query(trx).insert({
                 car_id: car_id,
                 rent_price,
-                available_at,
+                rent_start,
+                rent_end,
                 available
             });
 
@@ -151,7 +159,7 @@ const createCar = async (req: Request, res: Response) => {
     }
 };
 
-const updateCar = async (req: Request, res: Response) => {
+const updateCar = async (req: Request, res: Response): Promise<void> => {
     const id: string = req.params.id;
     const {
         plate,
@@ -164,7 +172,8 @@ const updateCar = async (req: Request, res: Response) => {
         type,
         year,
         rent_price,
-        available_at,
+        rent_start,
+        rent_end,
         available,
         option,
         spec
@@ -186,38 +195,27 @@ const updateCar = async (req: Request, res: Response) => {
 
             await Rents.query(trx).where('car_id', id).update({
                 rent_price,
-                available_at,
+                rent_start,
+                rent_end,
                 available
-            });
+            }).onConflict('id').ignore();;
 
             await Options.query(trx).where('car_id', id).delete();
             if (Array.isArray(option)) {
                 await Promise.all(option.map((opt: string) => 
-                    Options.query(trx).insert({
-                        car_id: id,
-                        option: opt
-                    })
+                    Options.query(trx).insert({ option: opt })
                 ));
             } else {
-                await Options.query(trx).insert({
-                    car_id: id,
-                    option
-                });
+                await Options.query(trx).insert({ option });
             }
 
             await Specs.query(trx).where('car_id', id).delete();
             if (Array.isArray(spec)) {
                 await Promise.all(spec.map((sp: string) => 
-                    Specs.query(trx).insert({
-                        car_id: id,
-                        spec: sp
-                    })
+                    Specs.query(trx).insert({ spec: sp })
                 ));
             } else {
-                await Specs.query(trx).insert({
-                    car_id: id,
-                    spec
-                });
+                await Specs.query(trx).insert({ spec });
             }
         })
 

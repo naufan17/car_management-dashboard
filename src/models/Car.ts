@@ -17,6 +17,8 @@ class Car extends Model {
     rents!: Rent[];
     options!: Option[];
     specs!: Spec[];
+    created_at!: Date;
+    updated_at!: Date;
 
     static get tableName() {
         return 'cars';
