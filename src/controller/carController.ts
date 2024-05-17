@@ -75,41 +75,152 @@ const getCarById = async (req: Request, res: Response) => {
 }
 
 const createCar = async (req: Request, res: Response) => {
-    const { car, rent, spec, option } = req.body;
+    const {
+        plate,
+        manufacture,
+        model,
+        image,
+        capacity,
+        description,
+        transmission,
+        type,
+        year,
+        rent_price,
+        available_at,
+        available,
+        option,
+        spec
+    } = req.body;
     const car_id = uuidv4();
-
+    
     try {
         await transaction(Cars.knex(), async (trx) => {
-            await Cars.query(trx).insert({ ...car, id: car_id });
-            await Rents.query(trx).insert({ ...rent, car_id: car_id });
-            await Promise.all(spec.spec.map((spec: any) => Specs.query(trx).insert({ spec: spec, car_id: car_id })));
-            await Promise.all(option.option.map((option: any) => Options.query(trx).insert({ option: option, car_id: car_id })));
+            await Cars.query(trx).insert({
+                id: car_id,
+                plate,
+                manufacture,
+                model,
+                image,
+                capacity,
+                description,
+                transmission,
+                type,
+                year
+            });
 
-            res.status(201).json({ message: 'Car created successfully' })
-        })
+            await Rents.query(trx).insert({
+                car_id: car_id,
+                rent_price,
+                available_at,
+                available
+            });
+
+            if (Array.isArray(option)) {
+                await Promise.all(option.map((opt: string) => 
+                    Options.query(trx).insert({
+                        car_id: car_id,
+                        option: opt
+                    })
+                ));
+            } else {
+                await Options.query(trx).insert({
+                    car_id: car_id,
+                    option
+                });
+            }
+
+            if (Array.isArray(spec)) {
+                await Promise.all(spec.map((sp: string) => 
+                    Specs.query(trx).insert({
+                        car_id: car_id,
+                        spec: sp
+                    })
+                ));
+            } else {
+                await Specs.query(trx).insert({
+                    car_id: car_id,
+                    spec
+                });
+            }
+
+            res.status(201).json({ message: 'Car created successfully' });
+        });
     } catch (err) {
         console.error(err);
         res.status(500).json({ error: 'Failed to create car' });
     }
-}
+};
 
 const updateCar = async (req: Request, res: Response) => {
     const id: string = req.params.id;
-    const { car, rent, spec, option } = req.body;
+    const {
+        plate,
+        manufacture,
+        model,
+        image,
+        capacity,
+        description,
+        transmission,
+        type,
+        year,
+        rent_price,
+        available_at,
+        available,
+        option,
+        spec
+    } = req.body;
 
     try {
         await transaction(Cars.knex(), async (trx) => {
-            await Cars.query(trx).where('id', id).update(car);
+            await Cars.query(trx).findById(id).update({
+                plate,
+                manufacture,
+                model,
+                image,
+                capacity,
+                description,
+                transmission,
+                type,
+                year
+            });
 
-            await Rents.query(trx).where('car_id', id).update(rent);
-
-            await Specs.query(trx).where('car_id', id).delete();
-            await Promise.all(spec.spec.map((spec: any) => Specs.query(trx).insert({ car_id: id, spec: spec })));
+            await Rents.query(trx).where('car_id', id).update({
+                rent_price,
+                available_at,
+                available
+            });
 
             await Options.query(trx).where('car_id', id).delete();
-            await Promise.all(option.option.map((option: any) => Options.query(trx).insert({ car_id: id, option: option })));
+            if (Array.isArray(option)) {
+                await Promise.all(option.map((opt: string) => 
+                    Options.query(trx).insert({
+                        car_id: id,
+                        option: opt
+                    })
+                ));
+            } else {
+                await Options.query(trx).insert({
+                    car_id: id,
+                    option
+                });
+            }
 
-            res.status(201).json({ message: 'Car updated successfully' })
+            await Specs.query(trx).where('car_id', id).delete();
+            if (Array.isArray(spec)) {
+                await Promise.all(spec.map((sp: string) => 
+                    Specs.query(trx).insert({
+                        car_id: id,
+                        spec: sp
+                    })
+                ));
+            } else {
+                await Specs.query(trx).insert({
+                    car_id: id,
+                    spec
+                });
+            }
+
+            res.status(201).json({ message: 'Car updated successfully' });
         })
     } catch (err) {
         console.error(err);

@@ -2,7 +2,7 @@ import type { Knex } from "knex";
 
 export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable('cars', (table: Knex.TableBuilder) => {
-        table.uuid('id').primary();
+        table.uuid('id').primary().defaultTo(knex.raw('gen_random_uuid()'));
         table.string('plate', 10).unique();
         table.string('manufacture', 50).notNullable();
         table.string('model', 50).notNullable();
@@ -12,6 +12,8 @@ export async function up(knex: Knex): Promise<void> {
         table.string('transmission', 20).notNullable();
         table.string('type', 20).notNullable();
         table.integer('year').notNullable();
+        table.timestamp('created_at').defaultTo(knex.fn.now());
+        table.timestamp('updated_at').defaultTo(knex.fn.now());    
     })
 }
 
