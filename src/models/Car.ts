@@ -4,6 +4,20 @@ import Option from './Option';
 import Spec from './Spec';
 
 class Car extends Model {
+    id!: string;
+    plate!: string;
+    manufacture!: string;
+    model!: string;
+    image!: string | null;
+    capacity!: number;
+    description!: string | null;
+    transmission!: string;
+    type!: string;
+    year!: number;
+    rents!: Rent[];
+    options!: Option[];
+    specs!: Spec[];
+
     static get tableName() {
         return 'cars';
     }
