@@ -2,8 +2,8 @@ import type { Knex } from "knex";
 
 export async function up(knex: Knex): Promise<void> {
     return knex.schema.createTable('orders', (table: Knex.TableBuilder) => {
-        table.uuid('order_id').primary();
-        table.uuid('car_id').references('car_id').inTable('cars');
+        table.uuid('id').primary();
+        table.uuid('car_id').references('id').inTable('cars');
         table.integer('duration', 10).notNullable();
         table.timestamp('rent_start').notNullable();
         table.timestamp('rent_end').notNullable();

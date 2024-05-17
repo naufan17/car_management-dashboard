@@ -4,8 +4,6 @@ class Rent extends Model {
     id!: number;
     car_id!: string;
     rent_price!: number;
-    rent_start!: Date;
-    rent_end!: Date;
     available!: boolean;
 
     static get tableName() {

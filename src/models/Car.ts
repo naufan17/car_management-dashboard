@@ -2,6 +2,7 @@ import { Model } from 'objection';
 import Rent from './Rent';
 import Option from './Option';
 import Spec from './Spec';
+import Order from './Order';
 
 class Car extends Model {
     id!: string;
@@ -49,7 +50,15 @@ class Car extends Model {
                     from: 'cars.id',
                     to: 'specs.car_id'
                 }
-            }
+            },
+            orders: {
+                relation: Model.HasManyRelation,
+                modelClass: Order,
+                join: {
+                    from: 'cars.id',
+                    to: 'orders.car_id'
+                }
+            },    
         };
     }
 }
