@@ -20,12 +20,12 @@ const getOrder = async (req: Request, res: Response) => {
             rent_end: order.rent_end,
             total_price: order.total_price,
             status: order.status,
-            cars: {
+            car: {
                 manufacture: order.cars.manufacture,
                 model: order.cars.model,
                 type: order.cars.type,    
             },
-            customers: {
+            customer: {
                 name: order.customers.name,
                 email: order.customers.email,
                 address: order.customers.address,    
@@ -58,12 +58,12 @@ const getOrderById = async (req: Request, res: Response) => {
         //     rent_end: order.rent_end,
         //     total_price: order.total_price,
         //     status: order.status,
-        //     cars: {
+        //     car: {
         //         manufacture: order.cars.manufacture,
         //         model: order.cars.model,
         //         type: order.cars.type,    
         //     },
-        //     customers: {
+        //     customer: {
         //         name: order.customers.name,
         //         email: order.customers.email,
         //         address: order.customers.address,    
@@ -131,7 +131,15 @@ const deleteOrder = async (req: Request, res: Response) => {
 
     try {
         const rowsDeleted = await transaction(Order.knex(), async (trx) => {
-            return await Order.query(trx).deleteById(id);
+            const order = await Order.query(trx).findById(id);
+
+            if (!order) {
+                res.status(404).json({ message: 'Order not found' });
+                return
+            }
+
+            await Order.query(trx).deleteById(id);
+            return await Customer.query(trx).deleteById(order.customer_id);
         });
 
         if (rowsDeleted === 0) {

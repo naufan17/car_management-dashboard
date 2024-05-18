@@ -14,16 +14,16 @@ HTTP Rest API database cars
     {
       "cars": [
         {  
-           "id": uuid,
-           "manufacture": string,
-           "model": string,
-           "image": string,
-           "type": string,
-           "year": number,
-           "rent_price": number,
-           "available": boolean,
-           "created_at": Date,
-           "updated_at": Date,
+          "id": uuid,
+          "manufacture": string,
+          "model": string,
+          "image": string,
+          "type": string,
+          "year": number,
+          "rent_price": number,
+          "available": boolean,
+          "created_at": Date,
+          "updated_at": Date,
         },
       ]
     }
@@ -31,43 +31,43 @@ HTTP Rest API database cars
   - Errors: (404)
     ```json
     { 
-        message: 'Car not found' 
+      "message": "Car not found" 
     }
     ```    
 
-### 2. Get Cars By Id
+### 2. Get Car By Id
 - Method: `GET`
 - URL Patterns: `{{base_url}}/api/car/{id}`
 - Response:
   - Success: (200)
     ```json
     {  
-        "id": uuid,
-        "plate": string,
-        "manufacture": string,
-        "model": string,
-        "image": string,
-        "capacity": number,
-        "description": text,
-        "transmission": string,
-        "type": string,
-        "year": number,
-        "rent_price": number,
-        "available": boolean,
-        "options": [ string ],
-        "specs": [ string ],
-        "created_at": Date,
-        "updated_at": Date,
+      "id": uuid,
+      "plate": string,
+      "manufacture": string,
+      "model": string,
+      "image": string,
+      "capacity": number,
+      "description": text,
+      "transmission": string,
+      "type": string,
+      "year": number,
+      "rent_price": number,
+      "available": boolean,
+      "option": [ string ],
+      "spec": [ string ],
+      "created_at": Date,
+      "updated_at": Date,
     },
     ```
   - Errors: (404)
     ```json
     { 
-        message: 'Car not found' 
+      "message": "Car not found" 
     }
     ```
 
-### 3. Upload Image Cars
+### 3. Upload Image Car
 - Method: `POST`
 - URL Patterns: `{{base_url}}/api/cars`
 - Headers:
@@ -77,7 +77,7 @@ HTTP Rest API database cars
     }
   ```
 - Body:
-    ``` json
+  ``` json
     {
       "image": image (type=file, max=2mb)
     }
@@ -96,86 +96,88 @@ HTTP Rest API database cars
     }
     ```
 
-### 4. Create Cars
+### 4. Create Car
 - Method: `POST`
 - URL Patterns: `{{base_url}}/api/car`
 - Body:
     ```json
     {  
-       "plate": string,
-       "manufacture": string,
-       "model": string,
-       "image": string,
-       "capacity": number,
-       "description": text,
-       "transmission": text,
-       "type": text,
-       "year": number,
-       "rent_price": number,
-       "options": [ string ],
-       "specs": [ string ]
+      "plate": string,
+      "manufacture": string,
+      "model": string,
+      "image": string,
+      "capacity": number,
+      "description": text,
+      "transmission": text,
+      "type": text,
+      "year": number,
+      "rent_price": number,
+      "options": [ string ],
+      "specs": [ string ]
     }
     ```
 - Response:
   - Success: (201)
     ```json
     { 
-        message: 'Car created successfully' 
+      "message": "Car created successfully" 
     }
+    ```
   - Errors: (500)
     ```json
     { 
-        message: 'Failed to create car' 
+      "message": "Failed to create car" 
     }
     ```
 
-### 5. Update Cars
+### 5. Update Car
 - Method: `PUT`
 - URL Patterns: `{{base_url}}/api/car/{id}`
 - Body:
-    ```json
+  ```json
     {  
-       "plate": string,
-       "manufacture": string,
-       "model": string,
-       "image": string,
-       "capacity": number,
-       "description": text,
-       "transmission": text,
-       "type": text,
-       "year": number,
-       "rent_price": number,
-       "options": [ string ],
-       "specs": [ string ]
+      "plate": string,
+      "manufacture": string,
+      "model": string,
+      "image": string,
+      "capacity": number,
+      "description": text,
+      "transmission": text,
+      "type": text,
+      "year": number,
+      "rent_price": number,
+      "options": [ string ],
+      "specs": [ string ]
     }
     ```
 - Response:
   - Success: (201)
     ```json
     { 
-        message: 'Car updated successfully' 
+      "message": "Car updated successfully" 
     }
+    ```
   - Errors: (500)
     ```json
     { 
-        message: 'Failed to update car' 
+      "message": "Failed to update car" 
     }
     ```
 
-### 6. Delete Cars
+### 6. Delete Car
 - Method: `DELETE`
 - URL Patterns: `{{base_url}}/api/car/{id}`
 - Response:
   - Success: (204)
     ```json
     { 
-        message: 'Car deleted successfully' 
+      "message": "Car deleted successfully" 
     }
     ```
-  - Errors: (500)
+  - Errors: (404)
     ```json
     { 
-        message: 'Failed to delete car' 
+      "message": "Car not found" 
     }
     ```    
 
@@ -194,12 +196,12 @@ HTTP Rest API database cars
           "rent_end": Date,
           "total_price": number,
           "status": string,
-          "cars": {
+          "car": {
             "manufacture": string,
             "model": string,
             "type": string,
           },
-          "customers": {
+          "customer": {
             "name": string,
             "email": string,
             "address": string,
@@ -213,11 +215,11 @@ HTTP Rest API database cars
   - Errors: (404)
     ```json
     { 
-        message: 'Car not found' 
+      "message": "Car not found" 
     }
     ```  
 
-### 8. Create Orders
+### 8. Create Order
 - Method: `POST`
 - URL Patterns: `{{base_url}}/api/order`
 - Body:
@@ -234,11 +236,29 @@ HTTP Rest API database cars
   - Success: (201)
     ```json
     { 
-        message: 'Order created successfully' 
+      "message": "Order created successfully" 
     }
+    ```
   - Errors: (500)
     ```json
     { 
-        message: 'Failed to create order' 
+      "message": "Failed to create order" 
     }
     ```  
+
+### 9. Delete Order
+- Method: `DELETE`
+- URL Patterns: `{{base_url}}/api/order/{id}`
+- Response:
+  - Success: (204)
+    ```json
+    { 
+      "message": "Order deleted successfully"
+    }
+    ```
+  - Errors: (404)
+    ```json
+    { 
+      "message": "Order not found" 
+    }
+    ``` 

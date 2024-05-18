@@ -57,8 +57,8 @@ const getCarById = async (req: Request, res: Response) => {
             year: car.year,
             rent_price: car.rents[0].rent_price,
             available: car.rents[0].available,
-            options: car.options.map((option: any) => option.option),
-            specs: car.specs.map((spec: any) => spec.spec),
+            option: car.options.map((option: any) => option.option),
+            spec: car.specs.map((spec: any) => spec.spec),
             created_at: car.created_at,
             updated_at: car.updated_at,
         };
@@ -187,12 +187,14 @@ const updateCar = async (req: Request, res: Response): Promise<void> => {
                 await Promise.all(option.map((opt: string) => 
                     Option.query(trx).insert({ 
                         car_id: id,
-                        option: opt })
+                        option: opt 
+                    })
                 ));
             } else {
                 await Option.query(trx).insert({ 
                     car_id: id,
-                    option });
+                    option 
+                });
             }
 
             await Spec.query(trx).where('car_id', id).delete();
@@ -200,12 +202,14 @@ const updateCar = async (req: Request, res: Response): Promise<void> => {
                 await Promise.all(spec.map((sp: string) => 
                     Spec.query(trx).insert({ 
                         car_id: id,
-                        spec: sp })
+                        spec: sp 
+                    })
                 ));
             } else {
                 await Spec.query(trx).insert({ 
                     car_id: id,
-                    spec });
+                    spec 
+                });
             }
         })
 
