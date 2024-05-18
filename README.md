@@ -215,4 +215,30 @@ HTTP Rest API database cars
     { 
         message: 'Car not found' 
     }
-    ```    
+    ```  
+
+### 8. Create Orders
+- Method: `POST`
+- URL Patterns: `{{base_url}}/api/order`
+- Body:
+    ```json
+    {  
+      "car_id": uuid,
+      "name": string,
+      "email": string,
+      "address": string,
+      "duration": number,
+    }
+    ```
+- Response:
+  - Success: (201)
+    ```json
+    { 
+        message: 'Order created successfully' 
+    }
+  - Errors: (500)
+    ```json
+    { 
+        message: 'Failed to create order' 
+    }
+    ```  
