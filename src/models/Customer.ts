@@ -2,7 +2,7 @@ import { Model } from 'objection';
 import Order from './Order';
 
 class Customer extends Model {
-    id!: number;
+    id!: string;
     name!: string;
     email!: string;
     address!: string;
@@ -18,7 +18,7 @@ class Customer extends Model {
                 modelClass: Order,
                 join: {
                     from: 'customers.id',
-                    to: 'orders.car_id'
+                    to: 'orders.customer_id'
                 }
             },    
         };

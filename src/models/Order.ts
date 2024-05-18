@@ -3,7 +3,7 @@ import Car from './Car';
 import Customer from './Customer';
 
 class Order extends Model {
-    id!: number;
+    id!: string;
     car_id!: string;
     cars!: Car[];
     customer_id!: string;

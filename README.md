@@ -189,14 +189,21 @@ HTTP Rest API database cars
       "orders": [
         {  
           "id": uuid,
-          "manufacture": string,
-          "model": string,
-          "type": string,
           "duration": number,
           "rent_start": Date,
           "rent_end": Date,
           "total_price": number,
           "status": string,
+          "cars": {
+            "manufacture": string,
+            "model": string,
+            "type": string,
+          },
+          "customers": {
+            "name": string,
+            "email": string,
+            "address": string,
+          },
           "created_at": Date,
           "updated_at": Date,
         },
